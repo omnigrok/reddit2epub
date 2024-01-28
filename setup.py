@@ -6,11 +6,11 @@ with open("README.md", "r") as fh:
 
 setup(
     name='reddit2epub',
-    version='0.5.0',
+    version='0.6.0',
     description='A CLI to convert reddit series into epub files',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/mircohaug/reddit2epub.git',
+    url='https://github.com/omnigrok/reddit2epub.git',
     author='Mirco Haug',
     author_email='python@mircohaug.de',
     packages=setuptools.find_packages(),

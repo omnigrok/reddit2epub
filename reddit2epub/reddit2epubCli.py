@@ -1,6 +1,7 @@
 import json
 import re
 import sys
+import praw
 
 import click
 import pkg_resources
@@ -27,10 +28,17 @@ def print_version(ctx, param, value):
 @click.option('--overlap', default=2, help='How many common words do the titles have at the beginning.')
 @click.option('--all-reddit/--no-all-reddit', default=False, help='Search over all reddit. '
                                                                   'Meant for stories which span subreddits')
+@click.option('--client_id', '-c', required=True,
+              help='The API clientId to use.')
+@click.option('--api_secret', '-s', required=True,
+              help='The API secret to use.')
 @click.option('--version', help="Print version information and exit.", is_flag=True, callback=print_version,
               expose_value=False, is_eager=True)
-def main_cli(input_url: str, overlap: int, output_filename, all_reddit):
-    author, selected_submissions, search_title = get_chapters_from_anchor(input_url, overlap, all_reddit)
+def main_cli(input_url: str, overlap: int, output_filename, all_reddit, client_id: str, api_secret: str):
+    reddit = praw.Reddit(client_id=client_id, client_secret=api_secret,
+            user_agent='script:reddit2epub:omnigrok (by u/omnigrok, fork of mircohacker/reddit2epub)')
+
+    author, selected_submissions, search_title = get_chapters_from_anchor(input_url, reddit, overlap, all_reddit)
 
     len_subs = len(selected_submissions)
     print("Total number of found posts with title prefix '{}' in subreddit: {}".format(search_title, len_subs))

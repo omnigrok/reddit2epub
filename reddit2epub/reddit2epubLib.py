@@ -5,19 +5,18 @@ from ebooklib import epub
 from ebooklib.epub import EpubBook
 from praw.reddit import Redditor, Submission, Subreddit
 
-reddit = praw.Reddit(client_id="sUBJ9ERh2RyjmQ", client_secret=None,
-                     user_agent='Reddit stories to epub by mircohaug')
-
 def get_chapters_from_anchor(
         input_url,
+        reddit,
         overlap: int = 2,
         all_reddit: bool = False,
 ) -> (Redditor, List[Submission], str):
-    author, post_subreddit, title = process_anchor_url(input_url)
+    author, post_subreddit, title = process_anchor_url(input_url, reddit)
 
     search_title = " ".join(title.split(" ")[:overlap])
 
     selected_submissions = get_selected_posts(author=author,
+                                              reddit=reddit,
                                               post_subreddit=post_subreddit,
                                               all_reddit=all_reddit,
                                               search_title=search_title)
@@ -72,6 +71,7 @@ def create_book_from_chapters(
 
 def get_selected_posts(
         author: Redditor,
+        reddit: praw.Reddit,
         post_subreddit: Subreddit,
         search_title: str,
         all_reddit: bool = False,
@@ -103,7 +103,7 @@ def get_selected_posts(
     return selected_submissions
 
 
-def process_anchor_url(input_url: str) -> (Redditor, Subreddit, str):
+def process_anchor_url(input_url: str, reddit: praw.Reddit) -> (Redditor, Subreddit, str):
     initial_submission = reddit.submission(url=input_url)
     title = initial_submission.title
     author = initial_submission.author
